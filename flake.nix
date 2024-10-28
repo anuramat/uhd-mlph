@@ -35,6 +35,7 @@
                 matplotlib
                 tqdm
                 pytest
+                umap-learn # uniform manifold approximation
                 # torch
                 # torchvision
                 # pytorch-lightning # import as `pytorch_lightning`
