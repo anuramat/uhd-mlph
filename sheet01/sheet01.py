@@ -30,7 +30,7 @@ from numpy import linalg as LA
 # ### (a)
 
 # %%
-# TODO: implement PCA (fill in the blanks in the function below)
+# implement PCA (fill in the blanks in the function below)
 
 
 def pca(data, n_components=None):
@@ -174,28 +174,35 @@ components, projection = pca(normalized, n_components=2)
 # %%
 # make a scatterplot of the PCA projection
 plt.scatter(projection[0, :], projection[1, :])
+plt.title("basic PCA scatterplot")
 plt.show()
 
 
 # %%
-# TODO: make a scatterplot, coloring the dots by their label and including a legend with the label names
+# make a scatterplot, coloring the dots by their label and including a legend with the label names
 # (hint: one way is to call plt.scatter once for each of the three possible labels. Why could it be problematic to scatter the data sorted by labels though?)
-plt.figure()
-# figsize=(12,12)
-for label in unique_labels:
-    indices = labels == label
-    plt.scatter(
-        projection[0, indices],
-        projection[1, indices],
-        label=f"{label_names[label]} quark",
-        alpha=0.3,
-        s=10,
-    )
-plt.xlabel("component 1")
-plt.ylabel("component 2")
-plt.legend()
-plt.title("some cern data whatever")
-plt.show()
+
+
+def scatter(projection, title="some cern data"):
+    plt.figure()
+    # figsize=(12,12)
+    for label in unique_labels:
+        indices = labels == label
+        plt.scatter(
+            projection[0, indices],
+            projection[1, indices],
+            label=f"{label_names[label]} quark",
+            alpha=0.3,
+            s=10,
+        )
+    plt.xlabel("component 1")
+    plt.ylabel("component 2")
+    plt.legend()
+    plt.title(title)
+    plt.show()
+
+
+scatter(projection, title="proper PCA scatterplot")
 
 # %% [markdown]
 # ## 2 Nonlinear Dimension Reduction
@@ -213,20 +220,27 @@ label_names = ["b", "c", "q"]  # bottom, charm or light quarks
 # ### (a)
 
 # %%
-# TODO: Apply umap on the normalized jet features from excercise 1. It will take a couple of seconds.
+# Apply umap on the normalized jet features from excercise 1. It will take a couple of seconds.
 # note: umap uses a different convention regarding the feature- and sample dimension, N x p instead of p x N!
 
 reducer = umap.UMAP()
+transformed = reducer.fit_transform(features.T)
 
 # %%
-# TODO: make a scatterplot of the UMAP projection
+# make a scatterplot of the UMAP projection
+plt.scatter(transformed[:, 0], transformed[:, 1])
+plt.title("basic UMAP scatterplot")
+plt.show()
 
-# TODO: make a scatterplot, coloring the dots by their label and including a legend with the label names
+# make a scatterplot, coloring the dots by their label and including a legend with the label names
+scatter(transformed.T, title="proper UMAP scatterplot")
 
 # %% [markdown]
 # ### (b)
 
 # %%
 for n_neighbors in (2, 4, 8, 15, 30, 60, 100):
-    # TODO: repeat the above, varying the n_neighbors parameter of UMAP
+    # repeat the above, varying the n_neighbors parameter of UMAP
     reducer = umap.UMAP(n_neighbors=n_neighbors)
+    transformed = reducer.fit_transform(features.T)
+    scatter(transformed.T, title=f"UMAP with {n_neighbors}")
