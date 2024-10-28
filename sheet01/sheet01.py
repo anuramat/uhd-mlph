@@ -65,16 +65,18 @@ def pca(data, n_components=None):
 
     # compute the eigenvectors and eigenvalues
     eigval, eigvec = LA.eig(covmat)
-    assert all(eigval > 0)
-    assert np.isreal(eigvec).all()
+    # WARN: complex values
 
     # sort the eigenvectors by eigenvalue and take the n_components largest ones
-    indices = np.argsort(eigval)
+    indices = np.argsort(abs(eigval))
     # weirdly, numpy docs don't tell us if the it's decreasing or increasing:
-    if eigval[indices[0]] < eigval[indices[-1]]:
+    if abs(eigval[indices[0]]) < abs(eigval[indices[-1]]):
         indices = indices[::-1]
-    components = eigvec[:, indices[:n_components]].T
-    eigval = eigval[indices]
+    indices = indices[:n_components]
+    components = np.real_if_close(eigvec[:, indices].T)
+    eigval = np.real_if_close(eigval[indices])
+    assert np.issubdtype(components.dtype, np.floating)
+    assert np.all(eigval > 0)
 
     # compute X_projected, the projection of the data to the components
     X_projected = components @ X
@@ -146,31 +148,54 @@ label_names = ["b", "c", "q"]  # bottom, charm or light quarks
 print(f"{features.shape=}, {labels.shape=}")  # print the shapes
 
 # print how many samples of each class are present in the data (hint: numpy.unique)
-print(f"unique labels: {np.unique(labels)}")
+labels = np.array(labels, dtype=np.int8)
+unique_labels = np.unique(labels)
+print(f"{len(unique_labels)} unique labels: {unique_labels}")
 
 # %% [markdown]
 # Normalize the data
 
 # %%
-# TODO: report range of features and normalize the data to zero mean and unit variance
-
+# report range of features and normalize the data to zero mean and unit variance
+feat_ranges = features.max(axis=1) - features.min(axis=1)
+print(f"{min(feat_ranges)=}; {max(feat_ranges)=}")
+normalized = features - np.mean(features, axis=1, keepdims=True)
+normalized = normalized / np.std(features, axis=1, keepdims=True)
 
 # %% [markdown]
 # ### (c)
 # Compute a 2D PCA projection and make a scatterplot of the result, once without color, once coloring the dots by label. Interpret your results.
 
 # %%
-# TODO: apply PCA as implemented in (a)
+# apply PCA as implemented in (a)
+components, projection = pca(normalized, n_components=2)
 
 
 # %%
-# TODO: make a scatterplot of the PCA projection
+# make a scatterplot of the PCA projection
+plt.scatter(projection[0, :], projection[1, :])
+plt.show()
 
 
 # %%
 # TODO: make a scatterplot, coloring the dots by their label and including a legend with the label names
 # (hint: one way is to call plt.scatter once for each of the three possible labels. Why could it be problematic to scatter the data sorted by labels though?)
-
+plt.figure()
+# figsize=(12,12)
+for label in unique_labels:
+    indices = labels == label
+    plt.scatter(
+        projection[0, indices],
+        projection[1, indices],
+        label=f"{label_names[label]} quark",
+        alpha=0.3,
+        s=10,
+    )
+plt.xlabel("component 1")
+plt.ylabel("component 2")
+plt.legend()
+plt.title("some cern data whatever")
+plt.show()
 
 # %% [markdown]
 # ## 2 Nonlinear Dimension Reduction
