@@ -178,6 +178,9 @@ plt.title("basic PCA scatterplot")
 plt.show()
 
 
+# %% [markdown]
+# here we can only see a single cluster, thus the visualization is pretty useless
+
 # %%
 # make a scatterplot, coloring the dots by their label and including a legend with the label names
 # (hint: one way is to call plt.scatter once for each of the three possible labels. Why could it be problematic to scatter the data sorted by labels though?)
@@ -203,6 +206,9 @@ def scatter(projection, title="some cern data"):
 
 
 scatter(projection, title="proper PCA scatterplot")
+
+# %% [markdown]
+# this is much better, but still the clusters are overlapping a lot
 
 # %% [markdown]
 # ## 2 Nonlinear Dimension Reduction
@@ -236,6 +242,9 @@ plt.show()
 scatter(transformed.T, title="proper UMAP scatterplot")
 
 # %% [markdown]
+# Here we can immediately see much better separation. On the second plot we can see that there is a distinct cluster that only has q quarks in it, and a cluster of c/b quarks.
+
+# %% [markdown]
 # ### (b)
 
 # %%
@@ -244,3 +253,6 @@ for n_neighbors in (2, 4, 8, 15, 30, 60, 100):
     reducer = umap.UMAP(n_neighbors=n_neighbors)
     transformed = reducer.fit_transform(features.T)
     scatter(transformed.T, title=f"UMAP with {n_neighbors}")
+
+# %% [markdown]
+# overall, the general split is the same: q cluster, b/c cluster of a peculiar shape, and two mixed clusters
