@@ -18,8 +18,6 @@
           inherit system;
           config = {
             allowUnfree = true;
-            cudaSupport = true;
-            cudnnSupoprt = true;
           };
         };
       in {
@@ -41,7 +39,6 @@
                 # pytorch-lightning # import as `pytorch_lightning`
                 # tensorboard
               ]))
-            pkgs.cudaPackages.cudatoolkit
           ];
         };
       }
