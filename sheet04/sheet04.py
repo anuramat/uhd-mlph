@@ -80,6 +80,9 @@ qda_plot(0.5)
 qda_plot(2.0 / 3)
 
 # %% [markdown]
+# Changing the prior rescales the posteriors, keeping the shape, and changes the decision boundary, 
+
+# %% [markdown]
 # ## 4 Trees and Random Forests
 
 # %% [markdown]
@@ -216,5 +219,4 @@ grid_search.fit(X_train, y_train)
 from sklearn.metrics import accuracy_score
 
 print("final hyperparameters:", grid_search.best_params_)
-print(grid_search.predict(X_train))
 print("accuracy on the test set:", accuracy_score(y_test, grid_search.predict(X_test)))
