@@ -71,6 +71,89 @@ df = pd.read_csv(f"{path_to_datasets}/{dataset_name}.csv")
 print(df.head(10))
 
 # %% [markdown]
+# ### (a)
+
+# %%
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+
+def get_data(dataset_name, split_name):
+    # split_name - train/val
+    dm = DataManager()
+    dm.add_dataset(
+        dataset_name,
+        "Llama3",
+        "8B",
+        "chat",
+        layer=12,
+        split=0.8,
+        center=False,
+        device="cpu",
+        path_to_datasets=path_to_datasets,
+        path_to_acts=path_to_acts,
+    )
+    x, y = dm.get(split_name)
+    return x.numpy(), y.numpy().astype(int)
+
+
+def get_multi(names, split_name):
+    xl = []
+    yl = []
+    for name in names:
+        x, y = get_data(name, split_name)
+        xl.append(x)
+        yl.append(y)
+
+    return np.concatenate(xl, axis=0), np.concatenate(yl, axis=0)
+
+
+for name in dataset_names:
+    x_train, y_train = get_data(name, "train")
+    x_val, y_val = get_data(name, "val")
+
+    clf = LogisticRegression(C=99999).fit(x_train, y_train)
+    y_pred = clf.predict(x_val)
+    print(f"dataset {name}, accuracy: {accuracy_score(y_val, y_pred)}")
+
+
+# %% [markdown]
+# Activation vectors are linearly separable, since we get a perfect accuracy.
+
+# %% [markdown]
+# ### (b)
+
+# %%
+datasets = dataset_names[1:]
+print("validation datasets:", datasets)
+for C in [1, 99999]:
+    print(f"inverse regularization strength: {C}")
+    for val_dataset in datasets:
+        x_train, y_train = get_data("cities", "train")
+        x_val, y_val = get_data(val_dataset, "val")
+        clf = LogisticRegression(C=C).fit(x_train, y_train)
+        y_pred = clf.predict(x_val)
+        print(f"validation: {val_dataset}, accuracy: {accuracy_score(y_val, y_pred)}")
+    print("")
+
+# %% [markdown]
+# We get generalization, especially with regularization, but not on statements
+# with negation.
+
+# %% [markdown]
+# ### (c)
+
+# %%
+x_train, y_train = get_multi(dataset_names[:2], "train")
+x_val, y_val = get_multi(dataset_names[2:], "val")
+clf = LogisticRegression().fit(x_train, y_train)
+y_pred = clf.predict(x_val)
+print(f"accuracy: {accuracy_score(y_val, y_pred)}")
+
+# %% [markdown]
+# After adding statements with negation to our training set, the situation improves.
+
+# %% [markdown]
 # ## 3 Log-sum-exp and soft(arg)max
 # ### (b)
 
