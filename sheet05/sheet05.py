@@ -288,3 +288,26 @@ plot_square_grad(model, 20)
 # structure on a much larger scale, which is especially easy to see on the
 # gradient plot. Successively applying ReLU and linear transformations allows us
 # to gradually shift the inputs.
+
+# %% [markdown]
+# # 5 Number of linear regions
+#
+# This is equivalent to finding the maximum number of regions a set of n lines can divide a plane into. If we have $n$ lines, the new line can introduce at most $n+1$ regions. Thus:
+#
+# $$
+# a_{n+1} = a_n + n + 1
+# $$
+# $$
+# a_0 = 1
+# $$
+# $$
+# a_1 = 2
+# $$
+# Using induction hypothesis:
+# $$
+# a_n = \frac{(n+1)n}{2} + 1
+# $$
+# $$
+# a_{n+1} = \frac{(n+1)(n+2)}{2} + 1 = a_n + n + 1
+# $$
+# qed
