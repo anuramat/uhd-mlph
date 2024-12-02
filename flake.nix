@@ -25,6 +25,8 @@
           buildInputs = [
             (pkgs.python3.withPackages (python-pkgs:
               with python-pkgs; [
+                pynvim
+                jupyter-client
                 jupyter
                 jupytext
                 numpy
@@ -37,8 +39,8 @@
                 pandas
                 torch
                 # torchvision
-                # pytorch-lightning # import as `pytorch_lightning`
-                # tensorboard
+                pytorch-lightning # import as `pytorch_lightning`
+                tensorboard
               ]))
           ];
         };
