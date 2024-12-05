@@ -25,8 +25,6 @@
           buildInputs = [
             (pkgs.python3.withPackages (python-pkgs:
               with python-pkgs; [
-                pynvim
-                jupyter-client
                 jupyter
                 jupytext
                 numpy
