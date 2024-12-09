@@ -47,4 +47,5 @@ print("Ratio:", "%.5E" % (n_params_conv / n_params_fc))
 ```
 
 Total parameters: 1.23646E+08
+
 Ratio: 1.02496E-04
