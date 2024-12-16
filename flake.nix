@@ -36,6 +36,7 @@
                 umap-learn # uniform manifold approximation
                 pandas
                 torch
+                h5py
                 # torchvision
                 pytorch-lightning # import as `pytorch_lightning`
                 tensorboard
